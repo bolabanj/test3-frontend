@@ -8,6 +8,8 @@
     <link rel="stylesheet" href="general.css" />
     <link rel="stylesheet" href="cards.css" />
     <link rel="stylesheet" href="make-a-quiz.css" />
+    
+
   </head>
   <body>
     <ul class="topnav">
@@ -37,9 +39,9 @@
       </h3>
       <div id="quiz"></div>
     </div>
-
+    <script src="configuration.js"></script>
     <script>
-      let host = "http://localhost:8080";
+      let host = getHost();
       let questions = [];
       let list = document.getElementById("list");
       let quiz = document.getElementById("quiz");
@@ -51,7 +53,11 @@
       displayTheQuestions();
 
       async function getAll() {
-        let response = await fetch(host + "/questions");
+        let response = await fetch(host + "/questions", {
+          headers: {
+            Authorization: "Bearer " + localStorage.getItem("token"),
+          },
+        });
         let result = await response.json();
         return result;
       }
@@ -80,7 +86,7 @@
           div.className = "card";
           let innerHtml = `
        
-      <img src="http://localhost:8080/questions/${question.id}/image" alt="question" style="width:100%">
+      <img src="${host}/questions/${question.id}/image" alt="question" style="width:100%">
       <div class="container">
         <h4><b>${question.id}</b></h4> 
         <p>${question.description}</p>
@@ -126,7 +132,11 @@
           };
         }
 
-        let response = await fetch(endpoint, request);
+        let response = await fetch(endpoint, request, {
+          headers: {
+            Authorization: "Bearer " + localStorage.getItem("token"),
+          },
+        });
         if(response.status == 200) {
           quizId = await response.json();
           alert("The quiz was saved successfully!");
@@ -141,5 +151,6 @@
         location.href = "make-a-quiz.html";
       }
     </script>
+    
   </body>
 </html>
